@@ -52,6 +52,7 @@ BankAccount --> AccountStatus : status
 Operation --> OperationType : operation
 @enduml
 ```
+
 ## Screenshot
 
-[image diagram](img.png)
+![image diagram](assets/img.png)
