@@ -24,8 +24,8 @@ class SavingAccount{
     -interestRate: double
 }
 
-CurrentAccount --> BankAccount
-SavingAccount --> BankAccount
+CurrentAccount --|> BankAccount
+SavingAccount --|> BankAccount
 
 class Operation {
     -id: long
@@ -52,3 +52,6 @@ BankAccount --> AccountStatus : status
 Operation --> OperationType : operation
 @enduml
 ```
+## Screenshot
+
+[image diagram](img.png)
