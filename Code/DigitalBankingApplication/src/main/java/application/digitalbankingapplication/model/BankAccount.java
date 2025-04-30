@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "account_type", discriminatorType = DiscriminatorType.STRING, length = 4)
-public class BankAccount {
+public abstract class BankAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String bankAccountId;

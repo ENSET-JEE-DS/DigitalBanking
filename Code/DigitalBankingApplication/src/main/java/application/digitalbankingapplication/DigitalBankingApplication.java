@@ -7,7 +7,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
 import application.digitalbankingapplication.model.AccountOperation;
 import application.digitalbankingapplication.model.CurrentAccount;
 import application.digitalbankingapplication.model.Customer;
@@ -17,6 +16,7 @@ import application.digitalbankingapplication.model.enums.OperationType;
 import application.digitalbankingapplication.repository.AccountOperationRepository;
 import application.digitalbankingapplication.repository.BankAccountRepository;
 import application.digitalbankingapplication.repository.CustomerRepository;
+import application.digitalbankingapplication.service.IBankAccountService;
 
 @SpringBootApplication
 public class DigitalBankingApplication {
@@ -31,8 +31,10 @@ public class DigitalBankingApplication {
         SpringApplication.run(DigitalBankingApplication.class, args);
     }
 
-    @Bean
-    public CommandLineRunner start(CustomerRepository customerRepository, BankAccountRepository bankAccountRepository) {
+    // @Bean
+    public CommandLineRunner repositoryTest(CustomerRepository customerRepository,
+            BankAccountRepository bankAccountRepository) {
+
         return args -> {
             Stream.of("John", "Jane", "Jim", "Jill").forEach(name -> {
                 Customer customer = Customer.builder()
@@ -72,6 +74,58 @@ public class DigitalBankingApplication {
                     accountOperationRepository.save(accountOperation);
                 }
             });
+        };
+    }
+
+    @Bean
+    public CommandLineRunner serviceTest(IBankAccountService bankAccountService) {
+        return args -> {
+            bankAccountService.saveCustomer(
+                    Customer.builder()
+                            .customerName("John")
+                            .customerEmail("john@gmail.com")
+                            .build());
+            bankAccountService.saveCustomer(Customer.builder()
+                    .customerName("Jane")
+                    .customerEmail("jane@gmail.com")
+                    .build());
+
+            bankAccountService.saveCustomer(
+                    Customer.builder()
+                            .customerName("Doe")
+                            .customerEmail("doe@gmail.com")
+                            .build());
+
+            SavingAccount savingAccount1 = bankAccountService.saveSavingAccount(1000, 2L, 3);
+            SavingAccount savingAccount2 = bankAccountService.saveSavingAccount(1200, 3L, 3.5);
+
+            CurrentAccount currentAccount1 = bankAccountService.saveCurrentAccount(1000, 1L, 200);
+            CurrentAccount currentAccount2 = bankAccountService.saveCurrentAccount(1200, 3L, 100);
+
+            System.out.print("*****************************************\n");
+            bankAccountService.transfer(savingAccount1.getBankAccountId(), savingAccount2.getBankAccountId(), 100);
+            System.out.println(
+                    bankAccountService.getBankAccount(savingAccount1.getBankAccountId()).getBankAccountBalance());
+            System.out.println(
+                    bankAccountService.getBankAccount(savingAccount2.getBankAccountId()).getBankAccountBalance());
+            System.out.print("*****************************************\n");
+
+            System.out.print("*****************************************\n");
+            bankAccountService.transfer(currentAccount2.getBankAccountId(), currentAccount1.getBankAccountId(), 254);
+            System.out.println(
+                    bankAccountService.getBankAccount(currentAccount1.getBankAccountId()).getBankAccountBalance());
+            System.out.println(
+                    bankAccountService.getBankAccount(currentAccount2.getBankAccountId()).getBankAccountBalance());
+            System.out.print("*****************************************\n");
+
+            System.out.print("*****************************************\n");
+            bankAccountService.transfer(savingAccount1.getBankAccountId(), currentAccount1.getBankAccountId(), 254);
+            System.out.println(
+                    bankAccountService.getBankAccount(currentAccount1.getBankAccountId()).getBankAccountBalance());
+            System.out.println(
+                    bankAccountService.getBankAccount(savingAccount1.getBankAccountId()).getBankAccountBalance());
+            System.out.print("*****************************************\n");
+
         };
     }
 }
