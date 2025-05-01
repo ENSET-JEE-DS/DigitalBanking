@@ -54,11 +54,10 @@ public class BankAccountService implements IBankAccountService {
     public SavingAccount saveSavingAccount(double initialBalance, Long customerId, double interestRate) {
         log.info("Saving new saving account with interest rate {}", interestRate);
 
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> {
-                    log.error("Customer not found");
-                    return new CustomerNotFoundException("Customer not found");
-                });
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> {
+            log.error("Customer not found");
+            return new CustomerNotFoundException("Customer not found");
+        });
 
         SavingAccount savingAccount = new SavingAccount();
         savingAccount.setBankAccountBalance(initialBalance);
@@ -76,11 +75,10 @@ public class BankAccountService implements IBankAccountService {
     public CurrentAccount saveCurrentAccount(double initialBalance, Long customerId, double overDraft) {
         log.info("Saving new current account with over draft {}", overDraft);
 
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> {
-                    log.error("Customer not found");
-                    return new CustomerNotFoundException("Customer not found");
-                });
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> {
+            log.error("Customer not found");
+            return new CustomerNotFoundException("Customer not found");
+        });
 
         CurrentAccount currentAccount = new CurrentAccount();
         currentAccount.setBankAccountBalance(initialBalance);
@@ -161,5 +159,12 @@ public class BankAccountService implements IBankAccountService {
     @Override
     public List<BankAccount> getBankAccounts() {
         return bankAccountRepository.findAll();
+    }
+
+    @Override
+    public CustomerDTO getCustomer(Long customerId) {
+        return customerMapper.customerToCustomerDTO(customerRepository.findById(customerId).orElseThrow(() -> {
+            throw new CustomerNotFoundException("Cutomer with Id " + customerId + "not found");
+        }));
     }
 }

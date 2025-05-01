@@ -3,6 +3,7 @@ package application.digitalbankingapplication.RESTcontroller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,11 @@ public class CustomerRestController {
     @GetMapping
     public List<CustomerDTO> getAllCustomers() {
         return bankAccountService.listCustomers();
+    }
+
+    @GetMapping("/{customerId}")
+    public CustomerDTO getCustomer(@PathVariable Long customerId) {
+        return bankAccountService.getCustomer(customerId);
     }
     /*
      * @PostMapping

@@ -28,4 +28,6 @@ public interface IBankAccountService {
 
     List<BankAccount> getBankAccounts();
 
+
+    CustomerDTO getCustomer(Long customerId);
 }
