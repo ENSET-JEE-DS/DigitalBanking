@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import application.digitalbankingapplication.dto.CustomerDTO;
 import application.digitalbankingapplication.model.Customer;
 import application.digitalbankingapplication.service.IBankAccountService;
 import lombok.AllArgsConstructor;
@@ -22,13 +22,14 @@ public class CustomerRestController {
     private IBankAccountService bankAccountService;
 
     @GetMapping
-    public List<Customer> getAllCustomers() {
+    public List<CustomerDTO> getAllCustomers() {
         return bankAccountService.listCustomers();
     }
-
-    @PostMapping
-    public Customer addCustomer(@RequestBody Customer customerToAdd) {
-        return bankAccountService.saveCustomer(customerToAdd);
-    }
+    /*
+     * @PostMapping
+     * public CustomerDTO addCustomer(@RequestBody Customer customerToAdd) {
+     * return bankAccountService.saveCustomer(customerToAdd);
+     * }
+     */
 
 }

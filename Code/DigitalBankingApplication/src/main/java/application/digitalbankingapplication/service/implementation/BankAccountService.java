@@ -7,10 +7,13 @@ import org.springframework.stereotype.Service;
 
 import application.digitalbankingapplication.model.enums.AccountStatus;
 import application.digitalbankingapplication.model.enums.OperationType;
+import application.digitalbankingapplication.dto.CustomerDTO;
 import application.digitalbankingapplication.exception.BankAccountNotFoundException;
 import application.digitalbankingapplication.exception.CustomerAlreadyExistsException;
 import application.digitalbankingapplication.exception.CustomerNotFoundException;
 import application.digitalbankingapplication.exception.InsufficientBalanceException;
+// import application.digitalbankingapplication.mapper.BankAccountMapperImpl;
+import application.digitalbankingapplication.mapper.CustomerMapper;
 import application.digitalbankingapplication.model.AccountOperation;
 import application.digitalbankingapplication.model.BankAccount;
 import application.digitalbankingapplication.model.CurrentAccount;
@@ -33,9 +36,10 @@ public class BankAccountService implements IBankAccountService {
     private CustomerRepository customerRepository;
     private BankAccountRepository bankAccountRepository;
     private AccountOperationRepository accountOperationRepository;
+    private CustomerMapper customerMapper;
 
     @Override
-    public Customer saveCustomer(Customer customer) {
+    public CustomerDTO saveCustomer(Customer customer) {
         log.info("Saving new customer {}", customer.getCustomerName());
         if (customerRepository.findCustomerByCustomerName(customer.getCustomerName()) != null) {
             log.error("Customer already exists");
@@ -43,7 +47,7 @@ public class BankAccountService implements IBankAccountService {
         }
         Customer savedCustomer = customerRepository.save(customer);
         log.info("Customer saved successfully with id {}", savedCustomer.getCustomerId());
-        return savedCustomer;
+        return customerMapper.customerToCustomerDTO(savedCustomer);
     }
 
     @Override
@@ -91,8 +95,8 @@ public class BankAccountService implements IBankAccountService {
     }
 
     @Override
-    public List<Customer> listCustomers() {
-        return customerRepository.findAll();
+    public List<CustomerDTO> listCustomers() {
+        return customerRepository.findAll().stream().map(customerMapper::customerToCustomerDTO).toList();
     }
 
     @Override
@@ -155,7 +159,7 @@ public class BankAccountService implements IBankAccountService {
     }
 
     @Override
-    public List<BankAccount> getBankAccounts(){
+    public List<BankAccount> getBankAccounts() {
         return bankAccountRepository.findAll();
     }
 }

@@ -2,6 +2,7 @@ package application.digitalbankingapplication.service;
 
 import java.util.List;
 
+import application.digitalbankingapplication.dto.CustomerDTO;
 import application.digitalbankingapplication.model.BankAccount;
 import application.digitalbankingapplication.model.CurrentAccount;
 import application.digitalbankingapplication.model.Customer;
@@ -9,13 +10,13 @@ import application.digitalbankingapplication.model.SavingAccount;
 
 public interface IBankAccountService {
 
-    Customer saveCustomer(Customer customer);
+    CustomerDTO saveCustomer(Customer customer);
 
     SavingAccount saveSavingAccount(double initialBalance, Long customerId, double interestRate);
 
     CurrentAccount saveCurrentAccount(double initialBalance, Long customerId, double overDraft);
 
-    List<Customer> listCustomers();
+    List<CustomerDTO> listCustomers();
 
     BankAccount getBankAccount(String accountId);
 
