@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @AllArgsConstructor
-// @Transactional
+@Transactional
 @Slf4j
 public class BankAccountService implements IBankAccountService {
 
