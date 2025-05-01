@@ -39,13 +39,13 @@ public class BankAccountService implements IBankAccountService {
     private CustomerMapper customerMapper;
 
     @Override
-    public CustomerDTO saveCustomer(Customer customer) {
-        log.info("Saving new customer {}", customer.getCustomerName());
-        if (customerRepository.findCustomerByCustomerName(customer.getCustomerName()) != null) {
+    public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
+        log.info("Saving new customer {}", customerDTO.getCustomerName());
+        if (customerRepository.findCustomerByCustomerName(customerDTO.getCustomerName()) != null) {
             log.error("Customer already exists");
             throw new CustomerAlreadyExistsException("Customer already exists");
         }
-        Customer savedCustomer = customerRepository.save(customer);
+        Customer savedCustomer = customerRepository.save(customerMapper.customerDTOToCustomer(customerDTO));
         log.info("Customer saved successfully with id {}", savedCustomer.getCustomerId());
         return customerMapper.customerToCustomerDTO(savedCustomer);
     }
@@ -163,8 +163,32 @@ public class BankAccountService implements IBankAccountService {
 
     @Override
     public CustomerDTO getCustomer(Long customerId) {
-        return customerMapper.customerToCustomerDTO(customerRepository.findById(customerId).orElseThrow(() -> {
-            throw new CustomerNotFoundException("Cutomer with Id " + customerId + "not found");
-        }));
+        log.info("Getting customer with id {}", customerId);
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException("Cutomer with Id '" + customerId + "' not found"));
+        log.info("Found customer successfully");
+        return customerMapper.customerToCustomerDTO(customer);
+    }
+
+    @Override
+    public CustomerDTO updateCustomer(Long customerId, CustomerDTO customerDTOToUpdate) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException("Cutomer with Id '" + customerId + "' not found"));
+        log.info("Found customer successfully");
+        customer.setCustomerName(customerDTOToUpdate.getCustomerName());
+        customer.setCustomerEmail(customerDTOToUpdate.getCustomerEmail());
+        customerRepository.save(customer);
+        log.info("Customer updated successfully");
+        return customerMapper.customerToCustomerDTO(customer);
+    }
+
+    @Override
+    public void deleteCustomer(Long customerId) {
+        log.info("Deleting customer with id {}", customerId);
+        customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException("Cutomer with Id '" + customerId + "' not found"));
+        log.info("Found customer successfully");
+        customerRepository.deleteById(customerId);
+        log.info("Customer deleted successfully");
     }
 }

@@ -10,7 +10,7 @@ import application.digitalbankingapplication.model.SavingAccount;
 
 public interface IBankAccountService {
 
-    CustomerDTO saveCustomer(Customer customer);
+    CustomerDTO saveCustomer(CustomerDTO customerDTO);
 
     SavingAccount saveSavingAccount(double initialBalance, Long customerId, double interestRate);
 
@@ -30,4 +30,8 @@ public interface IBankAccountService {
 
 
     CustomerDTO getCustomer(Long customerId);
+
+    CustomerDTO updateCustomer(Long customerId, CustomerDTO customerDTOToUpdate);
+
+    void deleteCustomer(Long customerId);
 }

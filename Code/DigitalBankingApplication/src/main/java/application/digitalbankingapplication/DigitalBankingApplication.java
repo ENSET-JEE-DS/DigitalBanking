@@ -7,6 +7,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+
+import application.digitalbankingapplication.dto.CustomerDTO;
 import application.digitalbankingapplication.model.AccountOperation;
 import application.digitalbankingapplication.model.CurrentAccount;
 import application.digitalbankingapplication.model.Customer;
@@ -17,15 +19,13 @@ import application.digitalbankingapplication.repository.AccountOperationReposito
 import application.digitalbankingapplication.repository.BankAccountRepository;
 import application.digitalbankingapplication.repository.CustomerRepository;
 import application.digitalbankingapplication.service.IBankAccountService;
+import lombok.AllArgsConstructor;
 
 @SpringBootApplication
+@AllArgsConstructor
 public class DigitalBankingApplication {
 
     private final AccountOperationRepository accountOperationRepository;
-
-    DigitalBankingApplication(AccountOperationRepository accountOperationRepository) {
-        this.accountOperationRepository = accountOperationRepository;
-    }
 
     public static void main(String[] args) {
         SpringApplication.run(DigitalBankingApplication.class, args);
@@ -81,17 +81,17 @@ public class DigitalBankingApplication {
     public CommandLineRunner serviceTest(IBankAccountService bankAccountService) {
         return args -> {
             bankAccountService.saveCustomer(
-                    Customer.builder()
+                    CustomerDTO.builder()
                             .customerName("John")
                             .customerEmail("john@gmail.com")
                             .build());
-            bankAccountService.saveCustomer(Customer.builder()
+            bankAccountService.saveCustomer(CustomerDTO.builder()
                     .customerName("Jane")
                     .customerEmail("jane@gmail.com")
                     .build());
 
             bankAccountService.saveCustomer(
-                    Customer.builder()
+                    CustomerDTO.builder()
                             .customerName("Doe")
                             .customerEmail("doe@gmail.com")
                             .build());
