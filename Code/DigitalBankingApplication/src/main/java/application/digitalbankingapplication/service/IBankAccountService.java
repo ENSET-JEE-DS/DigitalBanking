@@ -5,7 +5,6 @@ import java.util.List;
 import application.digitalbankingapplication.dto.CustomerDTO;
 import application.digitalbankingapplication.model.BankAccount;
 import application.digitalbankingapplication.model.CurrentAccount;
-import application.digitalbankingapplication.model.Customer;
 import application.digitalbankingapplication.model.SavingAccount;
 
 public interface IBankAccountService {
@@ -26,7 +25,7 @@ public interface IBankAccountService {
 
     void transfer(String accountIdSource, String accountIdDestination, double amount);
 
-    List<BankAccount> getBankAccounts();
+    List<BankAccountDTO> getBankAccounts();
 
 
     CustomerDTO getCustomer(Long customerId);

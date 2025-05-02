@@ -12,8 +12,10 @@ import application.digitalbankingapplication.exception.BankAccountNotFoundExcept
 import application.digitalbankingapplication.exception.CustomerAlreadyExistsException;
 import application.digitalbankingapplication.exception.CustomerNotFoundException;
 import application.digitalbankingapplication.exception.InsufficientBalanceException;
-// import application.digitalbankingapplication.mapper.BankAccountMapperImpl;
+import application.digitalbankingapplication.mapper.BankAccountMapper;
+import application.digitalbankingapplication.mapper.CurrentAccountMapper;
 import application.digitalbankingapplication.mapper.CustomerMapper;
+import application.digitalbankingapplication.mapper.SavingAccountMapper;
 import application.digitalbankingapplication.model.AccountOperation;
 import application.digitalbankingapplication.model.BankAccount;
 import application.digitalbankingapplication.model.CurrentAccount;
@@ -27,7 +29,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Service
+@Servicef
 @AllArgsConstructor
 @Transactional
 @Slf4j
@@ -37,6 +39,9 @@ public class BankAccountService implements IBankAccountService {
     private BankAccountRepository bankAccountRepository;
     private AccountOperationRepository accountOperationRepository;
     private CustomerMapper customerMapper;
+    private BankAccountMapper bankAccountMapper;
+    private SavingAccountMapper savingAccountMapper;
+    private CurrentAccountMapper currentAccountMapper;
 
     @Override
     public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
@@ -157,8 +162,8 @@ public class BankAccountService implements IBankAccountService {
     }
 
     @Override
-    public List<BankAccount> getBankAccounts() {
-        return bankAccountRepository.findAll();
+    public List<BankAccountDTO> getBankAccounts() {
+        return bankAccountRepository.findAll().stream().map(bankAccountMapper::bankAccountToBankAccountDTO).toList();
     }
 
     @Override
