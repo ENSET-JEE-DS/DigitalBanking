@@ -4,18 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import application.digitalbankingapplication.model.enums.AccountStatus;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.DiscriminatorType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,7 +23,7 @@ public abstract class BankAccount {
     private LocalDate bankAccountCreatedAt;
     @Enumerated(EnumType.STRING)
     private AccountStatus bankAccountStatus;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Customer customer;
     @OneToMany(mappedBy = "bankAccount")
     private List<AccountOperation> accountOperationList;

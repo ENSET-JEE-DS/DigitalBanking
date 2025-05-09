@@ -2,14 +2,8 @@ package application.digitalbankingapplication.RESTcontroller;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 
 import application.digitalbankingapplication.dto.CustomerDTO;
 import application.digitalbankingapplication.service.IBankAccountService;
@@ -28,9 +22,18 @@ public class CustomerRestController {
         return bankAccountService.listCustomers();
     }
 
-    @GetMapping("/{id}")
-    public CustomerDTO getCustomer(@PathVariable(name = "id") Long customerId) {
+    @GetMapping("/{customerId}")
+    public CustomerDTO getCustomer(@PathVariable(name = "customerId") Long customerId) {
         return bankAccountService.getCustomer(customerId);
+    }
+
+    @GetMapping("/search")
+    public Page<CustomerDTO> searchCustomers(
+            @RequestParam(name = "kw", defaultValue = "") String keyword,
+            @RequestParam(name = "p", defaultValue = "0") int page,
+            @RequestParam(name = "s", defaultValue = "4") int size
+            ){
+        return bankAccountService.searchCustomers(keyword, page, size);
     }
 
     @PostMapping
@@ -38,14 +41,14 @@ public class CustomerRestController {
         return bankAccountService.saveCustomer(customerDTOToAdd);
     }
 
-    @PutMapping("/{id}")
-    public CustomerDTO updateCustomer(@PathVariable(name = "id") Long customerId,
+    @PutMapping("/{customerId}")
+    public CustomerDTO updateCustomer(@PathVariable(name = "customerId") Long customerId,
             @RequestBody CustomerDTO customerDTOToUpdate) {
         return bankAccountService.updateCustomer(customerId, customerDTOToUpdate);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteCustomer(@PathVariable(name = "id") Long customerId) {
+    @DeleteMapping("/{customerId}")
+    public void deleteCustomer(@PathVariable(name = "customerId") Long customerId) {
         bankAccountService.deleteCustomer(customerId);
     }
 

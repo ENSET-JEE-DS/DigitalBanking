@@ -3,6 +3,17 @@ package application.digitalbankingapplication.service.implementation;
 import java.time.LocalDate;
 import java.util.List;
 
+import application.digitalbankingapplication.dto.AccountHistoryDTO;
+import application.digitalbankingapplication.dto.AccountOperationDTO;
+import application.digitalbankingapplication.dto.BankAccountDTO;
+import application.digitalbankingapplication.dto.CurrentAccountDTO;
+import application.digitalbankingapplication.dto.SavingAccountDTO;
+import application.digitalbankingapplication.mapper.AccountOperationMapper;
+import application.digitalbankingapplication.mapper.BankAccountMapper;
+import application.digitalbankingapplication.mapper.CurrentAccountMapper;
+import application.digitalbankingapplication.mapper.SavingAccountMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import application.digitalbankingapplication.model.enums.AccountStatus;
@@ -12,7 +23,6 @@ import application.digitalbankingapplication.exception.BankAccountNotFoundExcept
 import application.digitalbankingapplication.exception.CustomerAlreadyExistsException;
 import application.digitalbankingapplication.exception.CustomerNotFoundException;
 import application.digitalbankingapplication.exception.InsufficientBalanceException;
-// import application.digitalbankingapplication.mapper.BankAccountMapperImpl;
 import application.digitalbankingapplication.mapper.CustomerMapper;
 import application.digitalbankingapplication.model.AccountOperation;
 import application.digitalbankingapplication.model.BankAccount;
@@ -37,6 +47,10 @@ public class BankAccountService implements IBankAccountService {
     private BankAccountRepository bankAccountRepository;
     private AccountOperationRepository accountOperationRepository;
     private CustomerMapper customerMapper;
+    private CurrentAccountMapper currentAccountMapper;
+    private SavingAccountMapper savingAccountMapper;
+    private BankAccountMapper bankAccountMapper;
+    private AccountOperationMapper accountOperationMapper;
 
     @Override
     public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
@@ -51,7 +65,7 @@ public class BankAccountService implements IBankAccountService {
     }
 
     @Override
-    public SavingAccount saveSavingAccount(double initialBalance, Long customerId, double interestRate) {
+    public SavingAccountDTO saveSavingAccount(double initialBalance, Long customerId, double interestRate) {
         log.info("Saving new saving account with interest rate {}", interestRate);
 
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> {
@@ -65,14 +79,15 @@ public class BankAccountService implements IBankAccountService {
         savingAccount.setBankAccountCreatedAt(LocalDate.now());
         savingAccount.setBankAccountStatus(AccountStatus.ACTIVATED);
         savingAccount.setSavingAccountInterestRate(interestRate);
+
         bankAccountRepository.save(savingAccount);
 
         log.info("Saving account saved successfully with id {}", savingAccount.getBankAccountId());
-        return savingAccount;
+        return savingAccountMapper.savingAccountToSavingAccountDTO(savingAccount);
     }
 
     @Override
-    public CurrentAccount saveCurrentAccount(double initialBalance, Long customerId, double overDraft) {
+    public CurrentAccountDTO saveCurrentAccount(double initialBalance, Long customerId, double overDraft) {
         log.info("Saving new current account with over draft {}", overDraft);
 
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> {
@@ -89,7 +104,27 @@ public class BankAccountService implements IBankAccountService {
         bankAccountRepository.save(currentAccount);
 
         log.info("Saving account saved successfully with id {}", currentAccount.getBankAccountId());
-        return currentAccount;
+        return currentAccountMapper.currentAccountToCurrentAccountDTO(currentAccount);
+    }
+
+    @Override
+    public List<CurrentAccountDTO> getAllCurrentAccounts() {
+        List<BankAccount> bankAccounts = bankAccountRepository.findAll();
+        return bankAccounts.stream()
+                .filter(ba -> ba instanceof CurrentAccount)
+                .map(ba -> (CurrentAccount) ba)
+                .map(currentAccountMapper::currentAccountToCurrentAccountDTO)
+                .toList();
+    }
+
+    @Override
+    public List<SavingAccountDTO> getAllSavingAccounts() {
+        List<BankAccount> bankAccounts = bankAccountRepository.findAll();
+        return bankAccounts.stream()
+                .filter(ba -> ba instanceof SavingAccount)
+                .map(ba -> (SavingAccount) ba)
+                .map(savingAccountMapper::savingAccountToSavingAccountDTO)
+                .toList();
     }
 
     @Override
@@ -157,8 +192,8 @@ public class BankAccountService implements IBankAccountService {
     }
 
     @Override
-    public List<BankAccount> getBankAccounts() {
-        return bankAccountRepository.findAll();
+    public List<BankAccountDTO> getAllBankAccounts() {
+        return bankAccountRepository.findAll().stream().map(bankAccountMapper::bankAccountToBankAccountDTO).toList();
     }
 
     @Override
@@ -190,5 +225,56 @@ public class BankAccountService implements IBankAccountService {
         log.info("Found customer successfully");
         customerRepository.deleteById(customerId);
         log.info("Customer deleted successfully");
+    }
+
+    @Override
+    public Page<CustomerDTO> searchCustomers(String keyword, int page, int size) {
+        log.info("Searching for customers with keyword {}", keyword);
+
+        Page<Customer> customerPage = customerRepository
+                .findCustomerByCustomerNameContaining(keyword, PageRequest.of(page, size));
+
+        log.info("Found {} customers", customerPage.toList().size());
+        return customerPage.map(customerMapper::customerToCustomerDTO);
+    }
+
+    @Override
+    public SavingAccountDTO getSavingAccountByCustomerId(String customerId) {
+        return savingAccountMapper.savingAccountToSavingAccountDTO(
+                (SavingAccount) bankAccountRepository.findById(customerId).orElse(new SavingAccount()));
+
+    }
+
+    @Override
+    public CurrentAccountDTO getCurrentAccountByCustomerId(String customerId) {
+        return currentAccountMapper.currentAccountToCurrentAccountDTO(
+                (CurrentAccount) bankAccountRepository.findById(customerId).orElse(new CurrentAccount()));
+    }
+
+    @Override
+    public List<AccountOperationDTO> getAccountOperations(String bankAccountId) {
+        return accountOperationRepository.findByBankAccount_BankAccountId(bankAccountId).stream()
+                .map(accountOperationMapper::accountOperationToAccountOperationDTO).toList();
+    }
+
+    @Override
+    public List<AccountOperationDTO> getAllAccountOperations() {
+        return accountOperationRepository.findAll().stream()
+                .map(accountOperationMapper::accountOperationToAccountOperationDTO).toList();
+    }
+
+    @Override
+    public AccountHistoryDTO getAccountHistory(String bankAccountId, int page, int size) {
+        BankAccount bankAccount = bankAccountRepository.findById(bankAccountId).orElseThrow(() -> new BankAccountNotFoundException("Bank account not found"));
+        
+        Page<AccountOperation> accountOperations = accountOperationRepository.findByBankAccount_BankAccountId(bankAccountId, PageRequest.of(page, size));
+        AccountHistoryDTO accountHistoryDTO = new AccountHistoryDTO();
+        accountHistoryDTO.setBankAccountId(bankAccountId);
+        accountHistoryDTO.setBalance(accountOperations.getTotalElements());
+        accountHistoryDTO.setCurrentPage(accountOperations.getNumber());
+        accountHistoryDTO.setPageSize(accountOperations.getSize());
+        accountHistoryDTO.setTotalPages(accountOperations.getTotalPages());
+        accountHistoryDTO.setAccountOperationsDTO(accountOperations.getContent().stream().map(accountOperationMapper::accountOperationToAccountOperationDTO).toList());
+        return accountHistoryDTO;
     }
 }

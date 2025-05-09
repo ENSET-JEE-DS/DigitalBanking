@@ -185,6 +185,34 @@ public interface AccountOperationRepository extends JpaRepository<AccountOperati
 }
 ```
 
+### 5. REST API Endpoints
+
+#### Customer Endpoints
+
+- **GET /customer**: Get all customers
+- **GET /customer/{id}**: Get a specific customer by ID
+- **GET /customer/search?kw={keyword}&p={page}&s={size}**: Search customers with pagination
+- **POST /customer**: Add a new customer
+- **PUT /customer/{id}**: Update a customer
+- **DELETE /customer/{id}**: Delete a customer
+
+#### Bank Account Endpoints
+
+- **GET /bankAccount**: Get all bank accounts
+- **GET /bankAccount/{id}**: Get a specific bank account by ID
+- **POST /bankAccount/current**: Create a new current account
+- **POST /bankAccount/saving**: Create a new saving account
+- **POST /bankAccount/debit**: Perform a debit operation
+- **POST /bankAccount/credit**: Perform a credit operation
+- **POST /bankAccount/transfer**: Transfer money between accounts
+
+### 6. API Documentation
+
+The API is documented using Swagger UI, which can be accessed at:
+```
+http://localhost:8080/swagger-ui.html
+```
+
 ## Database Schema
 
 The application uses a single-table inheritance strategy for bank accounts with the following structure:
