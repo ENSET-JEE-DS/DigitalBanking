@@ -21,6 +21,6 @@ public class Customer {
     private String customerName;
     private String customerEmail; 
     @Builder.Default
-    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<BankAccount> bankAccountList = new ArrayList<>();
 }

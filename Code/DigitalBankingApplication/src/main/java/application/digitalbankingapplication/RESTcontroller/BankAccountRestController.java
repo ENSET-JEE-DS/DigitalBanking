@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/bankAccount")
 @AllArgsConstructor
 @Slf4j
+@CrossOrigin("*")
 public class BankAccountRestController {
     private IBankAccountService bankAccountService;
 
