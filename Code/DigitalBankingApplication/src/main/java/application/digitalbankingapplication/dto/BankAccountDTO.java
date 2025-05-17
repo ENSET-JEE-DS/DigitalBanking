@@ -1,10 +1,6 @@
 package application.digitalbankingapplication.dto;
 
 import java.time.LocalDate;
-import java.util.List;
-
-import application.digitalbankingapplication.model.AccountOperation;
-import application.digitalbankingapplication.model.Customer;
 import application.digitalbankingapplication.model.enums.AccountStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
