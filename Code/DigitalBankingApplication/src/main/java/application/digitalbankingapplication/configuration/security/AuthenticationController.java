@@ -43,7 +43,7 @@ public class AuthenticationController {
         JwtClaimsSet jwtClaimsSet = JwtClaimsSet.builder()
                 .issuer("digital-banking-application")
                 .issuedAt(instant)
-                .expiresAt(instant.plus(20, ChronoUnit.SECONDS))
+                .expiresAt(instant.plus(120, ChronoUnit.SECONDS))
                 .subject(username)
                 .claim("authorities", authorities)
                 .build();
