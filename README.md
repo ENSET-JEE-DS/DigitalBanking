@@ -3,6 +3,8 @@
 ## Video of Execution
 Please refer to 
 
+### ClassDiagram
+
 ```plantuml
 @startuml
 class Customer {
@@ -61,7 +63,10 @@ Operation --> OperationType : operation
 ![image diagram](assets/img.png)
 
 ## FrontEnd Report
-Please refer to
+Please refer to 
+- [BanckEnd Report](https://github.com/ENSET-JEE-DS/DigitalBanking/blob/NewMain/Code/DigitalBankingApplication/README.md)
 
 ## BackEnd Report
 Please refer to
+- [FrontEnd Report](https://github.com/ENSET-JEE-DS/DigitalBanking/blob/NewMain/Code/DigitalBankingApplication/README.md)
+
