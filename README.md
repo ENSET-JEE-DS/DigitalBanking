@@ -1,5 +1,8 @@
 # Digital Banking
 
+## Video of Execution
+Please refer to 
+
 ```plantuml
 @startuml
 class Customer {
@@ -56,3 +59,9 @@ Operation --> OperationType : operation
 ## Screenshot
 
 ![image diagram](assets/img.png)
+
+## FrontEnd Report
+Please refer to
+
+## BackEnd Report
+Please refer to
